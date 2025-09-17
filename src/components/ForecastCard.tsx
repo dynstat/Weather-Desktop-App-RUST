@@ -16,7 +16,14 @@ const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, temperatureUnit }
   };
 
   const getWeatherIcon = (icon: string) => {
-    return `https://openweathermap.org/img/wn/${icon}@2x.png`;
+    // Check if it's an emoji (Open-Meteo) or an icon code (OpenWeatherMap)
+    if (icon.includes('http') || icon.includes('@')) {
+      return icon; // Already a full URL
+    } else if (icon.match(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u)) {
+      return icon; // It's an emoji, return as is
+    } else {
+      return `https://openweathermap.org/img/wn/${icon}@2x.png`; // Fallback to OpenWeatherMap
+    }
   };
 
   return (
@@ -34,11 +41,15 @@ const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, temperatureUnit }
                 <div className="text-sm font-medium text-gray-300 min-w-[80px]">
                   {day.date}
                 </div>
-                <img
-                  src={getWeatherIcon(day.icon)}
-                  alt={day.description}
-                  className="h-10 w-10"
-                />
+                {day.icon.match(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u) ? (
+                  <div className="text-3xl">{day.icon}</div>
+                ) : (
+                  <img
+                    src={getWeatherIcon(day.icon)}
+                    alt={day.description}
+                    className="h-10 w-10"
+                  />
+                )}
                 <div>
                   <div className="text-sm text-white capitalize">
                     {day.description}

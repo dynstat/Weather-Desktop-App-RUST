@@ -16,8 +16,12 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
     onSettingsChange(localSettings);
   };
 
-  const handleCityChange = (city: string) => {
-    setLocalSettings(prev => ({ ...prev, city }));
+  const handleLatitudeChange = (latitude: number) => {
+    setLocalSettings(prev => ({ ...prev, latitude }));
+  };
+
+  const handleLongitudeChange = (longitude: number) => {
+    setLocalSettings(prev => ({ ...prev, longitude }));
   };
 
   const handleTemperatureUnitChange = (unit: 'celsius' | 'fahrenheit') => {
@@ -38,17 +42,36 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Default City
-            </label>
-            <input
-              type="text"
-              value={localSettings.city}
-              onChange={(e) => handleCityChange(e.target.value)}
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter city name"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Latitude
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={localSettings.latitude}
+                onChange={(e) => handleLatitudeChange(parseFloat(e.target.value) || 0)}
+                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="52.52"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Longitude
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={localSettings.longitude}
+                onChange={(e) => handleLongitudeChange(parseFloat(e.target.value) || 0)}
+                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="13.41"
+              />
+            </div>
+          </div>
+          <div className="text-xs text-gray-400">
+            Example: Berlin (52.52°N, 13.41°E), London (51.51°N, -0.13°W), New York (40.71°N, -74.01°W)
           </div>
         </CardContent>
       </Card>

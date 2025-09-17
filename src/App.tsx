@@ -16,7 +16,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<AppSettings>({
-    city: 'London',
+    latitude: 52.52,
+    longitude: 13.41,
     temperatureUnit: 'celsius',
     enableAirQuality: true,
   });
@@ -32,13 +33,15 @@ function App() {
 
       try {
         weather = await invoke<WeatherResponse>('get_weather', { 
-          city: settings.city 
+          latitude: settings.latitude,
+          longitude: settings.longitude
         });
       } catch (weatherErr) {
         // Fallback to mock data if real API fails
         console.log('Real weather API failed, using mock data:', weatherErr);
         weather = await invoke<WeatherResponse>('get_mock_weather', { 
-          city: settings.city 
+          latitude: settings.latitude,
+          longitude: settings.longitude
         });
       }
 
@@ -47,13 +50,15 @@ function App() {
       if (settings.enableAirQuality) {
         try {
           airQuality = await invoke<AirQualityData>('get_air_quality', { 
-            city: settings.city 
+            latitude: settings.latitude,
+            longitude: settings.longitude
           });
         } catch (airErr) {
           // Fallback to mock data if real API fails
           console.log('Real air quality API failed, using mock data:', airErr);
           airQuality = await invoke<AirQualityData>('get_mock_air_quality', { 
-            city: settings.city 
+            latitude: settings.latitude,
+            longitude: settings.longitude
           });
         }
         setAirQualityData(airQuality);
@@ -67,7 +72,7 @@ function App() {
 
   useEffect(() => {
     fetchWeatherData();
-  }, [settings.city, settings.enableAirQuality]);
+  }, [settings.latitude, settings.longitude, settings.enableAirQuality]);
 
   const handleSettingsChange = (newSettings: AppSettings) => {
     setSettings(newSettings);
@@ -162,7 +167,7 @@ function App() {
       
       <div className="flex-1 flex flex-col">
         <Header 
-          city={settings.city}
+          city={`${settings.latitude.toFixed(2)}°N, ${settings.longitude.toFixed(2)}°E`}
           onRefresh={fetchWeatherData}
           onSearch={() => setActiveTab('settings')}
           isLoading={isLoading}

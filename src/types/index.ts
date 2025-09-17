@@ -34,7 +34,8 @@ export interface WeatherResponse {
 }
 
 export interface AppSettings {
-  city: string;
+  latitude: number;
+  longitude: number;
   temperatureUnit: 'celsius' | 'fahrenheit';
   enableAirQuality: boolean;
 }

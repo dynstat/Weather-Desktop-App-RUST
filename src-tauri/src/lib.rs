@@ -39,74 +39,47 @@ pub struct WeatherResponse {
     pub forecast: Vec<ForecastData>,
 }
 
-// OpenWeatherMap API Response Structures
+// Open-Meteo API Response Structures
 #[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherResponse {
-    main: OpenWeatherMain,
-    weather: Vec<OpenWeatherWeather>,
-    wind: OpenWeatherWind,
-    name: String,
-    sys: OpenWeatherSys,
+struct OpenMeteoResponse {
+    latitude: f64,
+    longitude: f64,
+    timezone: String,
+    hourly: OpenMeteoHourly,
+    hourly_units: OpenMeteoHourlyUnits,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherMain {
-    temp: f64,
-    humidity: i32,
+struct OpenMeteoHourly {
+    time: Vec<String>,
+    temperature_2m: Vec<f64>,
+    relative_humidity_2m: Vec<f64>,
+    pressure_msl: Vec<f64>,
+    wind_speed_10m: Vec<f64>,
+    rain: Vec<f64>,
+    showers: Vec<f64>,
+    snowfall: Vec<f64>,
+    dew_point_2m: Vec<f64>,
+    cloud_cover: Vec<f64>,
+    visibility: Vec<f64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherWeather {
-    description: String,
-    icon: String,
+struct OpenMeteoHourlyUnits {
+    time: String,
+    temperature_2m: String,
+    relative_humidity_2m: String,
+    pressure_msl: String,
+    wind_speed_10m: String,
+    rain: String,
+    showers: String,
+    snowfall: String,
+    dew_point_2m: String,
+    cloud_cover: String,
+    visibility: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherWind {
-    speed: f64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherSys {
-    country: String,
-}
-
-// OpenWeatherMap 5-day Forecast Response
-#[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherForecastResponse {
-    list: Vec<OpenWeatherForecastItem>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct OpenWeatherForecastItem {
-    dt_txt: String,
-    main: OpenWeatherMain,
-    weather: Vec<OpenWeatherWeather>,
-}
-
-// AirVisual API Response Structures
-#[derive(Debug, Serialize, Deserialize)]
-struct AirVisualResponse {
-    data: AirVisualData,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct AirVisualData {
-    current: AirVisualCurrent,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct AirVisualCurrent {
-    pollution: AirVisualPollution,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct AirVisualPollution {
-    aqius: i32,
-    mainus: String,
-    aqicn: i32,
-    maincn: String,
-}
+// AirVisual API structures removed - using mock data instead
 
 fn get_aqi_category(aqi: i32) -> (String, String) {
     match aqi {
@@ -119,19 +92,28 @@ fn get_aqi_category(aqi: i32) -> (String, String) {
     }
 }
 
+fn get_weather_description(cloud_cover: f64, rain: f64, showers: f64, snowfall: f64) -> (String, String) {
+    if snowfall > 0.0 {
+        ("Snow".to_string(), "❄️".to_string())
+    } else if rain > 0.0 || showers > 0.0 {
+        ("Rain".to_string(), "🌧️".to_string())
+    } else if cloud_cover > 80.0 {
+        ("Overcast".to_string(), "☁️".to_string())
+    } else if cloud_cover > 50.0 {
+        ("Partly Cloudy".to_string(), "⛅".to_string())
+    } else if cloud_cover > 20.0 {
+        ("Mostly Clear".to_string(), "🌤️".to_string())
+    } else {
+        ("Clear".to_string(), "☀️".to_string())
+    }
+}
+
 // Real API Functions
 #[tauri::command]
-async fn get_weather(city: String) -> Result<WeatherResponse, String> {
-    // You can get a free API key from https://openweathermap.org/api
-    let api_key = "YOUR_OPENWEATHER_API_KEY"; // Replace with your actual API key
-    
-    if api_key == "YOUR_OPENWEATHER_API_KEY" {
-        return Err("Please add your OpenWeatherMap API key to the Rust code".to_string());
-    }
-    
+async fn get_weather(latitude: f64, longitude: f64) -> Result<WeatherResponse, String> {
     let url = format!(
-        "https://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric",
-        city, api_key
+        "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relative_humidity_2m,pressure_msl,wind_speed_10m,rain,showers,snowfall,dew_point_2m,cloud_cover,visibility",
+        latitude, longitude
     );
 
     let response = reqwest::get(&url)
@@ -142,164 +124,119 @@ async fn get_weather(city: String) -> Result<WeatherResponse, String> {
         return Err(format!("Weather API error: {}", response.status()));
     }
 
-    let weather_data: OpenWeatherResponse = response
+    let weather_data: OpenMeteoResponse = response
         .json()
         .await
         .map_err(|e| format!("Failed to parse weather data: {}", e))?;
 
-    // Get 5-day forecast
-    let forecast_url = format!(
-        "https://api.openweathermap.org/data/2.5/forecast?q={}&appid={}&units=metric",
-        city, api_key
-    );
+    // Get current weather (first hour of data)
+    let current_temp = weather_data.hourly.temperature_2m[0];
+    let current_humidity = weather_data.hourly.relative_humidity_2m[0] as i32;
+    let current_wind_speed = weather_data.hourly.wind_speed_10m[0];
+    let current_cloud_cover = weather_data.hourly.cloud_cover[0];
+    let current_rain = weather_data.hourly.rain[0];
+    let current_showers = weather_data.hourly.showers[0];
+    let current_snowfall = weather_data.hourly.snowfall[0];
 
-    let forecast_response = reqwest::get(&forecast_url)
-        .await
-        .map_err(|e| format!("Failed to fetch forecast data: {}", e))?;
+    // Determine weather description based on conditions
+    let (description, icon) = get_weather_description(current_cloud_cover, current_rain, current_showers, current_snowfall);
 
-    if !forecast_response.status().is_success() {
-        return Err(format!("Forecast API error: {}", forecast_response.status()));
-    }
-
-    let forecast_data: OpenWeatherForecastResponse = forecast_response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse forecast data: {}", e))?;
-
-    // Process forecast data - get next 3 days
+    // Process forecast data - get next 3 days from hourly data
     let mut forecast = Vec::new();
-    let mut current_date = String::new();
+    let mut processed_dates = std::collections::HashSet::new();
     let mut day_count = 0;
 
-    for item in &forecast_data.list {
-        let date = item.dt_txt.split(' ').next().unwrap_or("");
-        if date != current_date && day_count < 3 {
-            current_date = date.to_string();
-            day_count += 1;
-            
-            // Get max/min temp for the day
-            let mut max_temp = item.main.temp;
-            let mut min_temp = item.main.temp;
-            let description = item.weather[0].description.clone();
-            let icon = item.weather[0].icon.clone();
+    for (i, time_str) in weather_data.hourly.time.iter().enumerate() {
+        if day_count >= 3 {
+            break;
+        }
 
-            // Find max/min for this day
-            for other_item in &forecast_data.list {
-                let other_date = other_item.dt_txt.split(' ').next().unwrap_or("");
+        // Extract date from ISO string (e.g., "2025-09-17T00:00" -> "2025-09-17")
+        let date = time_str.split('T').next().unwrap_or("");
+        
+        if !processed_dates.contains(date) && i > 0 { // Skip first day (today)
+            processed_dates.insert(date.to_string());
+            day_count += 1;
+
+            // Find all hours for this date
+            let mut day_temps = Vec::new();
+            let mut day_cloud_cover = Vec::new();
+            let mut day_rain = Vec::new();
+            let mut day_showers = Vec::new();
+            let mut day_snowfall = Vec::new();
+
+            for (j, other_time) in weather_data.hourly.time.iter().enumerate() {
+                let other_date = other_time.split('T').next().unwrap_or("");
                 if other_date == date {
-                    max_temp = max_temp.max(other_item.main.temp);
-                    min_temp = min_temp.min(other_item.main.temp);
+                    day_temps.push(weather_data.hourly.temperature_2m[j]);
+                    day_cloud_cover.push(weather_data.hourly.cloud_cover[j]);
+                    day_rain.push(weather_data.hourly.rain[j]);
+                    day_showers.push(weather_data.hourly.showers[j]);
+                    day_snowfall.push(weather_data.hourly.snowfall[j]);
                 }
             }
 
-            let day_name = match day_count {
-                1 => "Tomorrow",
-                2 => "Day After",
-                3 => "3 Days",
-                _ => "Unknown",
-            };
+            if !day_temps.is_empty() {
+                let max_temp = day_temps.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
+                let min_temp = day_temps.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+                let avg_cloud_cover = day_cloud_cover.iter().sum::<f64>() / day_cloud_cover.len() as f64;
+                let total_rain = day_rain.iter().sum::<f64>();
+                let total_showers = day_showers.iter().sum::<f64>();
+                let total_snowfall = day_snowfall.iter().sum::<f64>();
 
-            forecast.push(ForecastData {
-                date: day_name.to_string(),
-                temperature_max: max_temp,
-                temperature_min: min_temp,
-                description,
-                icon,
-            });
+                let (day_description, day_icon) = get_weather_description(avg_cloud_cover, total_rain, total_showers, total_snowfall);
+
+                let day_name = match day_count {
+                    1 => "Tomorrow",
+                    2 => "Day After",
+                    3 => "3 Days",
+                    _ => "Unknown",
+                };
+
+                forecast.push(ForecastData {
+                    date: day_name.to_string(),
+                    temperature_max: max_temp,
+                    temperature_min: min_temp,
+                    description: day_description,
+                    icon: day_icon,
+                });
+            }
         }
     }
 
+    // Create current weather data
     let current = WeatherData {
-        temperature: weather_data.main.temp,
-        humidity: weather_data.main.humidity,
-        wind_speed: weather_data.wind.speed,
-        description: weather_data.weather[0].description.clone(),
-        icon: weather_data.weather[0].icon.clone(),
-        city: weather_data.name,
-        country: weather_data.sys.country,
+        temperature: current_temp,
+        humidity: current_humidity,
+        wind_speed: current_wind_speed,
+        description,
+        icon,
+        city: format!("{:.2}°N, {:.2}°E", latitude, longitude),
+        country: weather_data.timezone,
     };
 
     Ok(WeatherResponse { current, forecast })
 }
 
 #[tauri::command]
-async fn get_air_quality(city: String) -> Result<AirQualityData, String> {
-    // You can get a free API key from https://www.iqair.com/air-pollution-data-api
-    let api_key = "YOUR_AIRVISUAL_API_KEY"; // Replace with your actual API key
-    
-    if api_key == "YOUR_AIRVISUAL_API_KEY" {
-        return Err("Please add your AirVisual API key to the Rust code".to_string());
-    }
-    
-    let url = format!(
-        "https://api.airvisual.com/v2/city?city={}&state=&country=&key={}",
-        city, api_key
-    );
-
-    let response = reqwest::get(&url)
-        .await
-        .map_err(|e| format!("Failed to fetch air quality data: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!("Air quality API error: {}", response.status()));
-    }
-
-    let air_data: AirVisualResponse = response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse air quality data: {}", e))?;
-
-    let aqi = air_data.data.current.pollution.aqius;
-    let (category, color) = get_aqi_category(aqi);
-
-    // Note: AirVisual API doesn't provide detailed pollutant data in the free tier
-    // These are estimated values based on AQI
-    let (pm25, pm10, o3, no2, so2, co) = estimate_pollutants_from_aqi(aqi);
-
-    Ok(AirQualityData {
-        aqi,
-        category,
-        color,
-        pm25,
-        pm10,
-        o3,
-        no2,
-        so2,
-        co,
-    })
+async fn get_air_quality(_latitude: f64, _longitude: f64) -> Result<AirQualityData, String> {
+    // For now, we'll use mock data since AirVisual API requires a key
+    // In the future, you could integrate with other free air quality APIs
+    get_mock_air_quality(_latitude, _longitude).await
 }
 
-fn estimate_pollutants_from_aqi(aqi: i32) -> (f64, f64, f64, f64, f64, f64) {
-    // Rough estimation based on AQI ranges
-    let pm25 = match aqi {
-        0..=50 => 12.0 + (aqi as f64 * 0.76),
-        51..=100 => 50.0 + ((aqi - 50) as f64 * 0.5),
-        101..=150 => 75.0 + ((aqi - 100) as f64 * 0.5),
-        151..=200 => 100.0 + ((aqi - 150) as f64 * 0.4),
-        201..=300 => 120.0 + ((aqi - 200) as f64 * 0.8),
-        _ => 200.0 + ((aqi - 300) as f64 * 0.5),
-    };
-
-    let pm10 = pm25 * 1.5;
-    let o3 = pm25 * 0.05;
-    let no2 = pm25 * 0.02;
-    let so2 = pm25 * 0.01;
-    let co = pm25 * 0.1;
-
-    (pm25, pm10, o3, no2, so2, co)
-}
 
 #[tauri::command]
-async fn get_mock_weather(city: String) -> Result<WeatherResponse, String> {
+async fn get_mock_weather(latitude: f64, longitude: f64) -> Result<WeatherResponse, String> {
     // Mock data for demo purposes
     let current = WeatherData {
         temperature: 22.5,
         humidity: 65,
         wind_speed: 3.2,
         description: "Partly cloudy".to_string(),
-        icon: "02d".to_string(),
-        city: city.clone(),
-        country: "US".to_string(),
+        icon: "⛅".to_string(),
+        city: format!("{:.2}°N, {:.2}°E", latitude, longitude),
+        country: "GMT".to_string(),
     };
 
     let forecast = vec![
@@ -308,21 +245,21 @@ async fn get_mock_weather(city: String) -> Result<WeatherResponse, String> {
             temperature_max: 25.0,
             temperature_min: 18.0,
             description: "Sunny".to_string(),
-            icon: "01d".to_string(),
+            icon: "☀️".to_string(),
         },
         ForecastData {
             date: "Day After".to_string(),
             temperature_max: 23.0,
             temperature_min: 16.0,
             description: "Partly cloudy".to_string(),
-            icon: "02d".to_string(),
+            icon: "⛅".to_string(),
         },
         ForecastData {
             date: "3 Days".to_string(),
             temperature_max: 20.0,
             temperature_min: 14.0,
             description: "Light rain".to_string(),
-            icon: "10d".to_string(),
+            icon: "🌧️".to_string(),
         },
     ];
 
@@ -330,7 +267,7 @@ async fn get_mock_weather(city: String) -> Result<WeatherResponse, String> {
 }
 
 #[tauri::command]
-async fn get_mock_air_quality(_city: String) -> Result<AirQualityData, String> {
+async fn get_mock_air_quality(_latitude: f64, _longitude: f64) -> Result<AirQualityData, String> {
     // Mock data for demo purposes
     let aqi = 45;
     let (category, color) = get_aqi_category(aqi);
