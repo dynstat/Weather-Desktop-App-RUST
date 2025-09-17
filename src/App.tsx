@@ -26,16 +26,36 @@ function App() {
     setError(null);
     
     try {
-      // Using mock data for demo purposes
-      const weather = await invoke<WeatherResponse>('get_mock_weather', { 
-        city: settings.city 
-      });
+      // Try real APIs first, fallback to mock data if API keys are not configured
+      let weather: WeatherResponse;
+      let airQuality: AirQualityData | null = null;
+
+      try {
+        weather = await invoke<WeatherResponse>('get_weather', { 
+          city: settings.city 
+        });
+      } catch (weatherErr) {
+        // Fallback to mock data if real API fails
+        console.log('Real weather API failed, using mock data:', weatherErr);
+        weather = await invoke<WeatherResponse>('get_mock_weather', { 
+          city: settings.city 
+        });
+      }
+
       setWeatherData(weather);
 
       if (settings.enableAirQuality) {
-        const airQuality = await invoke<AirQualityData>('get_mock_air_quality', { 
-          city: settings.city 
-        });
+        try {
+          airQuality = await invoke<AirQualityData>('get_air_quality', { 
+            city: settings.city 
+          });
+        } catch (airErr) {
+          // Fallback to mock data if real API fails
+          console.log('Real air quality API failed, using mock data:', airErr);
+          airQuality = await invoke<AirQualityData>('get_mock_air_quality', { 
+            city: settings.city 
+          });
+        }
         setAirQualityData(airQuality);
       }
     } catch (err) {
