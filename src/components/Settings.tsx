@@ -37,7 +37,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
       <Card className="glass-card border-white/20 shadow-premium">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-white flex items-center space-x-2">
-            <MapPin className="h-5 w-5 text-blue-400" />
+            <MapPin className="h-5 w-5 text-emerald-400" />
             <span>Location Settings</span>
           </CardTitle>
         </CardHeader>
@@ -52,7 +52,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
                 step="0.01"
                 value={localSettings.latitude}
                 onChange={(e) => handleLatitudeChange(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-white/10 border border-emerald-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="52.52"
               />
             </div>
@@ -65,7 +65,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
                 step="0.01"
                 value={localSettings.longitude}
                 onChange={(e) => handleLongitudeChange(parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-white/10 border border-emerald-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="13.41"
               />
             </div>
@@ -79,7 +79,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
       <Card className="glass-card border-white/20 shadow-premium">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-white flex items-center space-x-2">
-            <Thermometer className="h-5 w-5 text-orange-400" />
+            <Thermometer className="h-5 w-5 text-emerald-400" />
             <span>Temperature Units</span>
           </CardTitle>
         </CardHeader>
@@ -88,14 +88,14 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
             <Button
               variant={localSettings.temperatureUnit === 'celsius' ? 'default' : 'outline'}
               onClick={() => handleTemperatureUnitChange('celsius')}
-              className={localSettings.temperatureUnit === 'celsius' ? 'bg-white/20 text-white' : 'text-gray-300 border-white/20'}
+              className={localSettings.temperatureUnit === 'celsius' ? 'bg-emerald-500/20 text-white border-emerald-500/30' : 'text-gray-300 border-emerald-500/20'}
             >
               Celsius (°C)
             </Button>
             <Button
               variant={localSettings.temperatureUnit === 'fahrenheit' ? 'default' : 'outline'}
               onClick={() => handleTemperatureUnitChange('fahrenheit')}
-              className={localSettings.temperatureUnit === 'fahrenheit' ? 'bg-white/20 text-white' : 'text-gray-300 border-white/20'}
+              className={localSettings.temperatureUnit === 'fahrenheit' ? 'bg-emerald-500/20 text-white border-emerald-500/30' : 'text-gray-300 border-emerald-500/20'}
             >
               Fahrenheit (°F)
             </Button>
@@ -106,7 +106,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
       <Card className="glass-card border-white/20 shadow-premium">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-white flex items-center space-x-2">
-            <Eye className="h-5 w-5 text-green-400" />
+            <Eye className="h-5 w-5 text-emerald-400" />
             <span>Display Options</span>
           </CardTitle>
         </CardHeader>
@@ -119,7 +119,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
             <Button
               variant={localSettings.enableAirQuality ? 'default' : 'outline'}
               onClick={() => handleAirQualityToggle(!localSettings.enableAirQuality)}
-              className={localSettings.enableAirQuality ? 'bg-white/20 text-white' : 'text-gray-300 border-white/20'}
+              className={localSettings.enableAirQuality ? 'bg-emerald-500/20 text-white border-emerald-500/30' : 'text-gray-300 border-emerald-500/20'}
             >
               {localSettings.enableAirQuality ? 'Enabled' : 'Disabled'}
             </Button>
@@ -130,7 +130,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, onSettingsChange }) => {
       <div className="flex justify-end">
         <Button
           onClick={handleSave}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 flex items-center space-x-2"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 flex items-center space-x-2 shadow-glow-green"
         >
           <Save className="h-4 w-4" />
           <span>Save Settings</span>

@@ -11,10 +11,10 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ city, onRefresh, onSearch, isLoading }) => {
   return (
-    <header className="h-16 glass-dark border-b border-white/10 flex items-center justify-between px-6">
+    <header className="h-16 glass-dark border-b border-emerald-500/10 flex items-center justify-between px-6">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
-          <MapPin className="h-5 w-5 text-blue-400" />
+          <MapPin className="h-5 w-5 text-emerald-400" />
           <span className="text-white font-medium">{city}</span>
         </div>
       </div>
@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ city, onRefresh, onSearch, isLoading })
           variant="ghost"
           size="icon"
           onClick={onSearch}
-          className="text-gray-300 hover:text-white hover:bg-white/10"
+          className="text-gray-300 hover:text-white hover:bg-emerald-500/10"
         >
           <Search className="h-5 w-5" />
         </Button>
@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ city, onRefresh, onSearch, isLoading })
           size="icon"
           onClick={onRefresh}
           disabled={isLoading}
-          className="text-gray-300 hover:text-white hover:bg-white/10 disabled:opacity-50"
+          className="text-gray-300 hover:text-white hover:bg-emerald-500/10 disabled:opacity-50"
         >
           <RefreshCw className={`h-5 w-5 ${isLoading ? 'animate-spin' : ''}`} />
         </Button>

@@ -82,7 +82,7 @@ function App() {
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-400"></div>
         </div>
       );
     }
@@ -94,7 +94,7 @@ function App() {
           <div className="text-gray-400">{error}</div>
           <button
             onClick={fetchWeatherData}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-glow-green"
           >
             Retry
           </button>
@@ -162,7 +162,7 @@ function App() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+    <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 flex">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       
       <div className="flex-1 flex flex-col">

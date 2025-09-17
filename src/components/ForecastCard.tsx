@@ -35,7 +35,7 @@ const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, temperatureUnit }
           {forecast.map((day, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-200"
+              className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200"
             >
               <div className="flex items-center space-x-4">
                 <div className="text-sm font-medium text-gray-300 min-w-[80px]">

@@ -45,22 +45,22 @@ const AQICard: React.FC<AQICardProps> = ({ airQuality }) => {
         </div>
         
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="p-3 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200">
             <div className="text-xs text-gray-400 uppercase tracking-wide">PM2.5</div>
             <div className="text-lg font-semibold text-white">{airQuality.pm25} μg/m³</div>
           </div>
           
-          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="p-3 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200">
             <div className="text-xs text-gray-400 uppercase tracking-wide">PM10</div>
             <div className="text-lg font-semibold text-white">{airQuality.pm10} μg/m³</div>
           </div>
           
-          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="p-3 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200">
             <div className="text-xs text-gray-400 uppercase tracking-wide">O₃</div>
             <div className="text-lg font-semibold text-white">{airQuality.o3} ppm</div>
           </div>
           
-          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="p-3 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200">
             <div className="text-xs text-gray-400 uppercase tracking-wide">NO₂</div>
             <div className="text-lg font-semibold text-white">{airQuality.no2} ppm</div>
           </div>

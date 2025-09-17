@@ -32,7 +32,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, temperatureUnit }) =
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <MapPin className="h-5 w-5 text-blue-400" />
+            <MapPin className="h-5 w-5 text-emerald-400" />
             <CardTitle className="text-xl font-semibold text-white">
               {weather.city}, {weather.country}
             </CardTitle>
@@ -68,16 +68,16 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, temperatureUnit }) =
         </div>
         
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 border border-white/10">
-            <Droplets className="h-5 w-5 text-blue-400" />
+          <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200">
+            <Droplets className="h-5 w-5 text-emerald-400" />
             <div>
               <div className="text-sm text-gray-400">Humidity</div>
               <div className="text-lg font-semibold text-white">{weather.humidity}%</div>
             </div>
           </div>
           
-          <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 border border-white/10">
-            <Wind className="h-5 w-5 text-green-400" />
+          <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 border border-emerald-500/20 hover:bg-emerald-500/10 transition-all duration-200">
+            <Wind className="h-5 w-5 text-emerald-400" />
             <div>
               <div className="text-sm text-gray-400">Wind Speed</div>
               <div className="text-lg font-semibold text-white">{weather.wind_speed} m/s</div>
