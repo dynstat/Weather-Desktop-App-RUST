@@ -84,30 +84,37 @@ The application includes both real API integration and mock data for demonstrati
 
 ### Real API Integration
 
-To use real weather and air quality data:
+The app automatically tries real APIs first and falls back to mock data if API keys are not configured.
 
-1. Get API keys:
-   - [OpenWeatherMap API](https://openweathermap.org/api)
-   - [AirVisual API](https://www.iqair.com/air-pollution-data-api)
+#### To use real weather and air quality data:
 
-2. Update the API keys in `src-tauri/src/lib.rs`:
+1. **Get API keys:**
+   - [OpenWeatherMap API](https://openweathermap.org/api) - Free tier: 1,000 calls/day
+   - [AirVisual API](https://www.iqair.com/air-pollution-data-api) - Free tier: 10,000 calls/month
+
+2. **Update the API keys in `src-tauri/src/lib.rs`:**
 ```rust
-let api_key = "YOUR_OPENWEATHER_API_KEY";
-let air_visual_key = "YOUR_AIRVISUAL_API_KEY";
+// Line 126 - Weather API
+let api_key = "YOUR_ACTUAL_OPENWEATHER_API_KEY";
+
+// Line 228 - Air Quality API  
+let api_key = "YOUR_ACTUAL_AIRVISUAL_API_KEY";
 ```
 
-3. Replace mock function calls with real ones in `src/App.tsx`:
-```typescript
-// Change from:
-const weather = await invoke<WeatherResponse>('get_mock_weather', { city: settings.city });
-
-// To:
-const weather = await invoke<WeatherResponse>('get_weather', { city: settings.city });
-```
+3. **The app automatically handles the rest:**
+   - Tries real APIs first
+   - Falls back to mock data if APIs fail
+   - Shows appropriate error messages
 
 ### Mock Data
 
-The application currently uses mock data for demonstration purposes, which allows you to see the full functionality without requiring API keys.
+The application includes comprehensive mock data that works out of the box, allowing you to see the full functionality without requiring API keys.
+
+### API Features
+
+- **OpenWeatherMap**: Current weather, 5-day forecast, temperature, humidity, wind speed
+- **AirVisual**: Air Quality Index (AQI), pollutant levels, health categories
+- **Automatic fallback**: Seamless transition between real and mock data
 
 ## Features Overview
 
