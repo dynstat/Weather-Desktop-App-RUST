@@ -1,4 +1,4 @@
-# Weather & Air Quality Dashboard
+# Weather Desktop App in Tauri
 
 A premium desktop application built with Tauri (Rust backend) and React frontend, featuring a modern dark theme with glassmorphism design.
 
