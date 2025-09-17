@@ -1,6 +1,6 @@
 # Weather Desktop App in Tauri
 
-A premium desktop application built with Tauri (Rust backend) and React frontend, featuring a modern dark theme with glassmorphism design.
+A simple desktop application built with Tauri (Rust backend) and React frontend, a modern dark theme with glassmorphism design.
 
 ## Screenshot
 <img width="1919" height="1032" alt="image" src="https://github.com/user-attachments/assets/8a9bed9b-2494-440f-a7fe-31135dce9633" />
