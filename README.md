@@ -35,8 +35,8 @@ A modern desktop weather application built with Tauri (Rust backend) and React f
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
-cd weather-dashboard
+git clone https://github.com/dynstat/Weather-Desktop-App-RUST
+cd Weather-Desktop-App-RUST
 ```
 
 2. Install dependencies:
