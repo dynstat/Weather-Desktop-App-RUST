@@ -1,10 +1,9 @@
 # Weather Desktop App in Tauri
 
-A simple desktop application built with Tauri (Rust backend) and React frontend, a modern dark theme with glassmorphism design.
+A modern desktop weather application built with Tauri (Rust backend) and React frontend, featuring a premium dark theme with glassmorphism design.
 
 ## Screenshot
 <img width="1919" height="1032" alt="image" src="https://github.com/user-attachments/assets/8a9bed9b-2494-440f-a7fe-31135dce9633" />
-
 
 ## Features
 
@@ -13,7 +12,7 @@ A simple desktop application built with Tauri (Rust backend) and React frontend,
 - **Air Quality Index**: Comprehensive air quality monitoring with AQI categories
 - **Premium UI/UX**: Dark theme with glassmorphism effects and smooth animations
 - **Responsive Design**: Clean resizing for different window sizes
-- **Settings Management**: Customizable city selection and temperature units
+- **Settings Management**: Customizable location coordinates and temperature units
 - **Modern Components**: Built with shadcn/ui and TailwindCSS
 
 ## Tech Stack
@@ -22,7 +21,7 @@ A simple desktop application built with Tauri (Rust backend) and React frontend,
 - **Frontend**: React + TypeScript
 - **Styling**: TailwindCSS + shadcn/ui
 - **Icons**: Lucide React
-- **APIs**: OpenWeatherMap & AirVisual (with mock data for demo)
+- **APIs**: Open-Meteo (free weather API) with mock air quality data
 
 ## Getting Started
 
@@ -84,41 +83,24 @@ weather-dashboard/
 
 ## API Configuration
 
-The application includes both real API integration and mock data for demonstration:
+The application uses Open-Meteo API for weather data and mock data for air quality:
 
-### Real API Integration
+### Weather API Integration
 
-The app automatically tries real APIs first and falls back to mock data if API keys are not configured.
+- **Open-Meteo API**: Free, no API key required
+- **Real-time weather data**: Temperature, humidity, wind speed, precipitation, cloud cover
+- **3-day forecast**: Generated from hourly data
+- **Automatic fallback**: Falls back to mock data if API fails
 
-#### To use real weather and air quality data:
+### Air Quality Data
 
-1. **Get API keys:**
-   - [OpenWeatherMap API](https://openweathermap.org/api) - Free tier: 1,000 calls/day
-   - [AirVisual API](https://www.iqair.com/air-pollution-data-api) - Free tier: 10,000 calls/month
+- **Mock data**: Currently uses simulated air quality data
+- **AQI categories**: Good, Moderate, Unhealthy for Sensitive Groups, Unhealthy, Very Unhealthy, Hazardous
+- **Pollutant levels**: PM2.5, PM10, O3, NO2, SO2, CO
 
-2. **Update the API keys in `src-tauri/src/lib.rs`:**
-```rust
-// Line 126 - Weather API
-let api_key = "YOUR_ACTUAL_OPENWEATHER_API_KEY";
+### No API Keys Required
 
-// Line 228 - Air Quality API  
-let api_key = "YOUR_ACTUAL_AIRVISUAL_API_KEY";
-```
-
-3. **The app automatically handles the rest:**
-   - Tries real APIs first
-   - Falls back to mock data if APIs fail
-   - Shows appropriate error messages
-
-### Mock Data
-
-The application includes comprehensive mock data that works out of the box, allowing you to see the full functionality without requiring API keys.
-
-### API Features
-
-- **OpenWeatherMap**: Current weather, 5-day forecast, temperature, humidity, wind speed
-- **AirVisual**: Air Quality Index (AQI), pollutant levels, health categories
-- **Automatic fallback**: Seamless transition between real and mock data
+The app works out of the box with real weather data from Open-Meteo and mock air quality data, so no API keys are needed for basic functionality.
 
 ## Features Overview
 
@@ -129,7 +111,7 @@ The application includes comprehensive mock data that works out of the box, allo
 - Responsive grid layout
 
 ### Settings
-- City selection
+- Location coordinates (latitude/longitude)
 - Temperature unit toggle (Celsius/Fahrenheit)
 - Air quality data enable/disable
 - Persistent settings storage
@@ -154,7 +136,7 @@ The application uses a premium dark theme with glassmorphism effects:
 ### Adding New Weather Data Points
 
 1. Update the `WeatherData` interface in `src/types/index.ts`
-2. Modify the Rust backend in `src-tauri/src/lib.rs`
+2. Modify the Rust backend in `src-tauri/src/lib.rs` to fetch new data from Open-Meteo API
 3. Update the `WeatherCard` component to display new data
 
 ### Styling Modifications
@@ -169,8 +151,8 @@ The application uses a premium dark theme with glassmorphism effects:
 
 - `npm run tauri dev` - Start development server
 - `npm run tauri build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run type-check` - Run TypeScript type checking
+- `npm run build` - Build frontend only
+- `npm run preview` - Preview built frontend
 
 ### Code Structure
 
