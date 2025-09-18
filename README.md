@@ -35,7 +35,7 @@ A modern desktop weather application built with Tauri (Rust backend) and React f
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/dynstat/Weather-Desktop-App-RUST
+git clone https://github.com/dynstat/Weather-Desktop-App-RUST.git
 cd Weather-Desktop-App-RUST
 ```
 
